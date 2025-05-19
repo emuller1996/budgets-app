@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
-import { Button, Modal } from 'react-bootstrap'
+import { Button, Modal, ProgressBar } from 'react-bootstrap'
 import BudgetForm from './components/BudgetForm'
 import { useBudget } from '../../hooks/useBudget'
 import DataTable from 'react-data-table-component'
@@ -95,25 +95,43 @@ export default function BudgetsPage() {
               {
                 name: 'amount',
                 selector: (row) => ViewDollar(row?.amount) ?? '',
-                minWidth: '150px',
+                minWidth: '100px',
               },
               {
                 name: 'available_amount',
                 selector: (row) => ViewDollar(row?.available_amount) ?? '',
-                minWidth: '150px',
+                minWidth: '100px',
               },
               {
                 name: 'assigned_amount',
                 selector: (row) => ViewDollar(row?.assigned_amount) ?? '',
-                minWidth: '150px',
+                minWidth: '100px',
               },
               {
                 name: 'used_amount',
                 selector: (row) => ViewDollar(row?.used_amount) ?? '',
-                minWidth: '150px',
+                minWidth: '100px',
               },
               { name: 'start_date', selector: (row) => row?.start_date ?? '' },
               { name: 'end_date', selector: (row) => row?.end_date ?? '' },
+              {
+                name: ' ',
+                minWidth: '100px',
+                cell: (row) => {
+                  return (
+                    <div style={{width:"100px"}}>
+                      <ProgressBar className='mt-3 w-100' >
+                        <ProgressBar
+                          striped
+                          variant="danger"
+                          now={(row.used_amount / row.amount) * 100}
+                          key={1}
+                        />
+                      </ProgressBar>
+                    </div>
+                  )
+                }
+              }
             ]}
             data={data ?? []}
             pagination
