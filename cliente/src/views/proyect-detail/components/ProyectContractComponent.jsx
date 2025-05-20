@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Button, Card, Modal, ProgressBar } from 'react-bootstrap'
 import { ViewDollar } from '../../../utils'
 import ProyectContractForm from './ProyectContractForm'
+import TimeAgo from 'timeago-react'
 
 export default function ProyectContractComponent({ AllContracts, Contracts }) {
   const [show, setShow] = useState(false)
@@ -30,6 +31,15 @@ export default function ProyectContractComponent({ AllContracts, Contracts }) {
                       <div className="d-flex justify-content-between">
                         <span>Company</span>
                         <span className="fw-bold">{pro?.company_object?.name_company}</span>
+                      </div>
+                      <div className='col-6'>
+                        <div className="d-flex justify-content-between ">
+                          <span>Date</span>
+                          <span className="fw-bold"><TimeAgo
+                            datetime={pro?.createdTime}
+                            locale='es'
+                          /></span>
+                        </div>
                       </div>
                       <div className="d-flex justify-content-between">
                         <span>Available amount</span>

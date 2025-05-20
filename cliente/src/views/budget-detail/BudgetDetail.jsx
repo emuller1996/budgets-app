@@ -5,6 +5,7 @@ import { useBudget } from '../../hooks/useBudget'
 import { useParams } from 'react-router-dom'
 import { ViewDollar } from '../../utils'
 import BudgetsProyectsComponent from './components/BudgetsProyectsComponent'
+import TimeAgo from 'timeago-react';
 
 export default function BudgetDetail() {
   const [key, setKey] = useState('proyects')
@@ -28,6 +29,13 @@ export default function BudgetDetail() {
             <div className="d-flex justify-content-between  align-items-end">
               <span>Name Budget</span>
               <span className="fw-bold fs-3">{dataDetalle?.name_budget}</span>
+            </div>
+            <div>
+              <p>
+                <TimeAgo
+                  datetime={dataDetalle?.createdTime}
+                  locale='es'
+                /></p>
             </div>
             <div className="d-flex justify-content-between">
               <span>Category</span>

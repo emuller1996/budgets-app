@@ -5,6 +5,7 @@ import { ViewDollar } from '../../../utils'
 import ProyectContractForm from './ProyectContractForm'
 import InvoiceContractForm from './InvoiceContractForm'
 import DataTable from 'react-data-table-component'
+import TimeAgo from 'timeago-react'
 
 export default function InvoicesProyectContractComponent({ AllInvoices, Invoices }) {
   const [show, setShow] = useState(false)
@@ -49,6 +50,17 @@ export default function InvoicesProyectContractComponent({ AllInvoices, Invoices
                     selector: (row) => row?.contract_object?.name_contract ?? '',
                     minWidth: '150px',
                   },
+
+                  {
+                    cell: (row) => {
+                      return (
+                        <TimeAgo
+                          datetime={row?.createdTime}
+                          locale='es'
+                        />
+                      )
+                    }
+                  }
                 ]}
               />
             </>
