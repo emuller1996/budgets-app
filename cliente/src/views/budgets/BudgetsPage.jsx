@@ -7,6 +7,7 @@ import DataTable from 'react-data-table-component'
 import { paginationComponentOptions } from '../../utils/optionsConfig'
 import { ViewDollar } from '../../utils'
 import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 export default function BudgetsPage() {
   const [show, setShow] = useState(false)
@@ -16,7 +17,7 @@ export default function BudgetsPage() {
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
 
-  const { getAllBudgets, data } = useBudget()
+  const { getAllBudgets, data, deleteBudgetById } = useBudget()
 
   useEffect(() => {
     getAllBudgets()
@@ -54,6 +55,32 @@ export default function BudgetsPage() {
           <p className="text-center m-0">{showDelete?.name_budget}</p>
           <p className="text-center m-0">{ViewDollar(showDelete?.available_amount)}</p>
 
+          <div className='text-center mt-4'>
+
+            <Button variant="primary" className='me-3' onClick={async () => {
+              try {
+                const res = await deleteBudgetById(showDelete._id)
+                console.log(res.data);
+                toast.success(res.data.message)
+                setDraw((status) => ++status)
+                setShowDelete(false)
+              } catch (error) {
+                console.log(error);
+                if(error?.response?.status ===400){
+                  toast.error(error?.response?.data?.message)
+                  
+                }
+              }
+            }}>
+              Delete Budget
+            </Button>
+
+            <Button variant="danger" className='text-white' onClick={() => {
+              setShowDelete(false)
+            }}>
+              No
+            </Button>
+          </div>
         </Modal.Body>
       </Modal>
       <div>
@@ -70,7 +97,6 @@ export default function BudgetsPage() {
               {
                 name: 'Id',
                 selector: (row) => row._id,
-                width: '160px',
                 cell: (row) => {
                   return (
                     <>
@@ -91,36 +117,16 @@ export default function BudgetsPage() {
                   )
                 },
               },
-              { name: 'name_budget', selector: (row) => row?.name_budget ?? '', minWidth: '150px' },
-              {
-                name: 'amount',
-                selector: (row) => ViewDollar(row?.amount) ?? '',
-                minWidth: '100px',
-              },
-              {
-                name: 'available_amount',
-                selector: (row) => ViewDollar(row?.available_amount) ?? '',
-                minWidth: '100px',
-              },
-              {
-                name: 'assigned_amount',
-                selector: (row) => ViewDollar(row?.assigned_amount) ?? '',
-                minWidth: '100px',
-              },
-              {
-                name: 'used_amount',
-                selector: (row) => ViewDollar(row?.used_amount) ?? '',
-                minWidth: '100px',
-              },
-              { name: 'start_date', selector: (row) => row?.start_date ?? '' },
-              { name: 'end_date', selector: (row) => row?.end_date ?? '' },
               {
                 name: ' ',
                 minWidth: '100px',
                 cell: (row) => {
                   return (
-                    <div style={{width:"100px"}}>
-                      <ProgressBar className='mt-3 w-100' >
+                    <div style={{ width: "100px" }}>
+                      <div>
+                        <span style={{ fontSize: "0.7em" }}>{`${ViewDollar(row.used_amount)}`}</span>
+                      </div>
+                      <ProgressBar className='w-100' >
                         <ProgressBar
                           striped
                           variant="danger"
@@ -131,7 +137,30 @@ export default function BudgetsPage() {
                     </div>
                   )
                 }
-              }
+              },
+              { name: 'Name Budget', selector: (row) => row?.name_budget ?? '', minWidth: '150px' },
+              {
+                name: 'Amount',
+                selector: (row) => ViewDollar(row?.amount) ?? '',
+                minWidth: '100px',
+              },
+              {
+                name: 'Available Amount',
+                selector: (row) => ViewDollar(row?.available_amount) ?? '',
+                minWidth: '100px',
+              },
+              {
+                name: 'Assigned Amount',
+                selector: (row) => ViewDollar(row?.assigned_amount) ?? '',
+                minWidth: '100px',
+              },
+              {
+                name: 'Used Amount',
+                selector: (row) => ViewDollar(row?.used_amount) ?? '',
+                minWidth: '100px',
+              },
+              { name: 'start_date', selector: (row) => row?.start_date ?? '' },
+              { name: 'end_date', selector: (row) => row?.end_date ?? '' },
             ]}
             data={data ?? []}
             pagination

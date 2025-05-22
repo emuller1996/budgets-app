@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import {
+  deleteBudgetByIdService,
   getAllBudgetByIdService,
   getAllBudgetsService,
   getProyectByBudgetService,
@@ -66,6 +67,10 @@ export const useBudget = () => {
     }
   }
 
+  const deleteBudgetById = async (id) =>{
+    return deleteBudgetByIdService(id)
+  }
+
   return {
     data,
     error,
@@ -75,5 +80,6 @@ export const useBudget = () => {
     dataDetalle,
     getProyectsBudgetById,
     Proyects,
+    deleteBudgetById
   }
 }

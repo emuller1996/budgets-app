@@ -21,6 +21,10 @@ export const getProyectByBudgetService = (id) => {
   return axios.get(`/budgets/${id}/proyect`);
 };
 
+export const deleteBudgetByIdService = (id) => {
+  return axios.delete(`/budgets/${id}`);
+};
+
 
 
 

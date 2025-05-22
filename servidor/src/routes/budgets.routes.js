@@ -20,6 +20,7 @@ BudgetsRouters.get("/", async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 });
+
 BudgetsRouters.get("/:id", async (req, res) => {
   try {
     var evento = await getDocumentById(req.params.id);
@@ -28,6 +29,62 @@ BudgetsRouters.get("/:id", async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 });
+
+BudgetsRouters.delete("/:id", async (req, res) => {
+  try {
+    let budget = await getDocumentById(req.params.id)
+    if (budget.used_amount > 0) {
+      return res.status(400).json({ message: "Presupuesto ya tiene monto Usado. no se puede borrar." })
+    }
+    const searchResult = await client.search({
+      index: INDEX_ES_MAIN,
+      size: 10000,
+      body: {
+        query: {
+          bool: {
+            must: [
+              {
+                term: {
+                  "type.keyword": {
+                    value: "project",
+                  },
+                },
+              },
+              {
+                term: {
+                  "budget_id.keyword": {
+                    value: req.params.id,
+                  },
+                },
+              },
+            ],
+          },
+        },
+        sort: [
+          { createdTime: { order: "asc" } }, // Reemplaza con el campo por el que quieres ordenar
+        ],
+      },
+    });
+
+    const projectsBudgets = searchResult.body.hits.hits.map((c) => {
+      return {
+        ...c._source,
+        _id: c._id,
+      };
+    }); 
+    
+    await updateElasticByType(req.params.id, { type: "budget_deleted" })    
+    
+    let promiSes = projectsBudgets.map( ele =>{
+      return updateElasticByType(ele._id, { type: "project_deleted" })
+    })
+    await Promise.all(promiSes)
+    return res.status(200).json({ message: "Budget Deleted." })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message })
+  }
+})
 
 BudgetsRouters.post("/", async (req, res) => {
   try {
